@@ -3,7 +3,9 @@ package com.udacity.sandwichclub;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +27,10 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+
+        //Enable actionBar up button. It navigates to the parent activity
+        ActionBar actionBar;
+        if ((actionBar = getSupportActionBar()) != null) actionBar.setDisplayHomeAsUpEnabled(true);
 
         ImageView ingredientsIv = findViewById(R.id.image_iv);
         tvOrigin = findViewById(R.id.origin_tv);
@@ -97,19 +103,27 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private String getFormattedString(@NonNull List<String> stringList) {
-        //Build a string for multiple items in the list, separated by (,)
-        StringBuilder stringBuilder = new StringBuilder("");
-        if (stringList.size() <= 0) return stringBuilder.toString();
+
+        /* I could use only TextUtils.join() but I want to join last element with "and"
+           Passing array {"A","B","C"} this function returns string "A, B and C" */
+
+        if (stringList.size() <= 0) {
+            //Empty list
+            return "";
+        }
         else if (stringList.size() == 1) {
-            return stringBuilder.append(stringList.get(0)).toString();
-        }
+            //List contains only one element
+            return stringList.get(0);
+        } else {
+            //Removing last element because concatenating it with "and"
+            String lastElement = stringList.get(stringList.size() - 1);
+            stringList.remove(stringList.size() - 1);
 
-        stringBuilder.append(stringList.get(0));
-        for (int i = 1; i < stringList.size() - 1; i++) {
-            stringBuilder.append(", ").append(stringList.get(i));
-        }
-        stringBuilder.append(" and ").append(stringList.get(stringList.size() - 1));
+            //Joining elements with the delimiter ", "
+            String otherElements = TextUtils.join(", ", stringList);
 
-        return stringBuilder.toString();
+            //Join the last element and return
+            return otherElements + " and " + lastElement;
+        }
     }
 }

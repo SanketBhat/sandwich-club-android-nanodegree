@@ -30,15 +30,19 @@ public class JsonUtils {
             Sandwich sandwich = new Sandwich();
 
             //Set name and alsoKnownAs fields
-            JSONObject name = jsonObject.getJSONObject(KEY_NAME);
-            sandwich.setMainName(name.getString(KEY_MAIN_NAME));
-            sandwich.setAlsoKnownAs(getStringList(name.getJSONArray(KEY_ALSO_KNOWN_AS)));
+            JSONObject name = jsonObject.optJSONObject(KEY_NAME);
+
+            //If field not found then optJSONObject() returns null
+            if (name != null) {
+                sandwich.setMainName(name.optString(KEY_MAIN_NAME));
+                sandwich.setAlsoKnownAs(getStringList(name.optJSONArray(KEY_ALSO_KNOWN_AS)));
+            }
 
             //Set other fields from the main JSON Object
-            sandwich.setPlaceOfOrigin(jsonObject.getString(KEY_PLACE_OF_ORIGIN));
-            sandwich.setDescription(jsonObject.getString(KEY_DESCRIPTION));
-            sandwich.setImage(jsonObject.getString(KEY_IMAGE));
-            sandwich.setIngredients(getStringList(jsonObject.getJSONArray(KEY_INGREDIENTS)));
+            sandwich.setPlaceOfOrigin(jsonObject.optString(KEY_PLACE_OF_ORIGIN));
+            sandwich.setDescription(jsonObject.optString(KEY_DESCRIPTION));
+            sandwich.setImage(jsonObject.optString(KEY_IMAGE));
+            sandwich.setIngredients(getStringList(jsonObject.optJSONArray(KEY_INGREDIENTS)));
 
             return sandwich;
         } catch (JSONException e) {
