@@ -5,21 +5,21 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.udacity.sandwichclub.model.Sandwich;
-import com.udacity.sandwichclub.utils.JsonUtils;
 
 import java.util.List;
 
 public class DetailActivity extends AppCompatActivity {
 
-    public static final String EXTRA_POSITION = "extra_position";
-    private static final int DEFAULT_POSITION = -1;
+    public static final String EXTRA_SANDWICH = "extra_sandwich";
 
     private TextView tvAlsoKnownAs, tvOrigin, tvIngredients, tvDescription;
 
@@ -27,6 +27,8 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         //Enable actionBar up button. It navigates to the parent activity
         ActionBar actionBar;
@@ -41,24 +43,16 @@ public class DetailActivity extends AppCompatActivity {
         // if intent is null or position of the sandwich is -1 finish the activity with
         // a toast message.
         Intent intent = getIntent();
-        int position;
         if (intent == null) {
             closeOnError();
             return;
-        } else if ((position = intent.getIntExtra(EXTRA_POSITION, DEFAULT_POSITION)) == DEFAULT_POSITION) {
+        } else if (!intent.hasExtra(EXTRA_SANDWICH)) {
             // EXTRA_POSITION not found in intent
             closeOnError();
             return;
         }
 
-        //Getting string array from strings.xml file stored at compile time
-        String[] sandwiches = getResources().getStringArray(R.array.sandwich_details);
-
-        //Getting string at the position user clicked
-        String json = sandwiches[position];
-
-        //Parse the JSON string and creating Sandwich object from it
-        Sandwich sandwich = JsonUtils.parseSandwichJson(json);
+        Sandwich sandwich = intent.getParcelableExtra(EXTRA_SANDWICH);
         if (sandwich == null) {
             // Sandwich data unavailable
             closeOnError();
@@ -70,7 +64,6 @@ public class DetailActivity extends AppCompatActivity {
         //Load the image with picasso library
         Picasso.with(this)
                 .load(sandwich.getImage())
-                .placeholder(R.drawable.ic_loading)
                 .error(R.drawable.ic_error)
                 .into(ingredientsIv);
 
@@ -110,8 +103,7 @@ public class DetailActivity extends AppCompatActivity {
         if (stringList.size() <= 0) {
             //Empty list
             return "";
-        }
-        else if (stringList.size() == 1) {
+        } else if (stringList.size() == 1) {
             //List contains only one element
             return stringList.get(0);
         } else {
@@ -125,5 +117,14 @@ public class DetailActivity extends AppCompatActivity {
             //Join the last element and return
             return otherElements + " and " + lastElement;
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            supportFinishAfterTransition();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -1,8 +1,11 @@
 package com.udacity.sandwichclub.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.List;
 
-public class Sandwich {
+public class Sandwich implements Parcelable {
 
     private String mainName;
     private List<String> alsoKnownAs = null;
@@ -17,13 +20,25 @@ public class Sandwich {
     public Sandwich() {
     }
 
-    public Sandwich(String mainName, List<String> alsoKnownAs, String placeOfOrigin, String description, String image, List<String> ingredients) {
-        this.mainName = mainName;
-        this.alsoKnownAs = alsoKnownAs;
-        this.placeOfOrigin = placeOfOrigin;
-        this.description = description;
-        this.image = image;
-        this.ingredients = ingredients;
+    public static final Creator<Sandwich> CREATOR = new Creator<Sandwich>() {
+        @Override
+        public Sandwich createFromParcel(Parcel in) {
+            return new Sandwich(in);
+        }
+
+        @Override
+        public Sandwich[] newArray(int size) {
+            return new Sandwich[size];
+        }
+    };
+
+    protected Sandwich(Parcel in) {
+        mainName = in.readString();
+        alsoKnownAs = in.createStringArrayList();
+        placeOfOrigin = in.readString();
+        description = in.readString();
+        image = in.readString();
+        ingredients = in.createStringArrayList();
     }
 
     public String getMainName() {
@@ -72,5 +87,20 @@ public class Sandwich {
 
     public void setIngredients(List<String> ingredients) {
         this.ingredients = ingredients;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mainName);
+        dest.writeStringList(alsoKnownAs);
+        dest.writeString(placeOfOrigin);
+        dest.writeString(description);
+        dest.writeString(image);
+        dest.writeStringList(ingredients);
     }
 }

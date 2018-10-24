@@ -45,8 +45,6 @@ public class JsonUtils {
             sandwich.setIngredients(getStringList(jsonObject.optJSONArray(KEY_INGREDIENTS)));
 
             return sandwich;
-        } catch (JSONException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
