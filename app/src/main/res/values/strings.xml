@@ -13,6 +13,8 @@
     <!-- Error messages-->
     <string name="detail_error_message">Sandwich data not available</string>
     <string name="data_absent">(no data)</string>
+    <string name="transition_name">SandwichImageTransition</string>
+    <string name="sandwich_image_desc">Sandwich image</string>
 
     <string-array name="sandwich_names">
         <item>Ham and cheese sandwich</item>
